@@ -130,6 +130,8 @@ $("#disconnect").click(logout);
 
 function loadBoard(id){
 	$("#content").empty();
+	//Show the title of which board we load
+	$board = $("<div>").attr({class:"boardTitle"}).text(id).appendTo("#content");
 	//Get all the list in the current board
 	for(list in $dictTotal[id]){
 		//Get all the card in the current list

@@ -17,16 +17,17 @@ body{
 
 .title{
 	font-weight:bold;
-	margin-bottom:0.5%;
+	
 }
 
 .state{
 	font-weight:bold;
 	font-size:18px;
+	margin:1%;
 }
 
 .card{
-	margin:1%;
+	margin:2%;
 	background-color:grey;
 	width:85%;
 }
@@ -34,11 +35,14 @@ body{
 .cardContent{
 	display:none;
 	color:white;
+	margin:2%;
+	width:80%;
 }
 
-.stateTitle{
+.stateTitle, .boardTitle{
 	font-weight:bold;
 	font-size:18px;
+	margin:0.5%;
 }
 
 .board, .list{
