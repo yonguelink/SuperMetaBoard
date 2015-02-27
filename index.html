@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Trello - iSolutions</title>
+
+		<!-- Bootstrap Core CSS -->
+		<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+		
+		
+		
+		<!-- jQuery -->
+		<script src="js/jquery-1.11.2.min.js"></script>
+
+		<!-- Javascript -->
+		<script type='text/javascript' src="js/modernizr.min.js"></script>
+		<script src="https://api.trello.com/1/client.js?key=7969be011a5a24f7569e5b0ade3ec847"></script>
+		<script src="js/trello.js"></script>
+		
+		<!--CSS Menu 
+			View the original author of the menu here: http://codepen.io/caprisci/pen/hwzrI/ 
+			View the updated code of the menu here: http://codepen.io/Isaac-O-Therrien/pen/MYXOZN -->
+		<link rel="stylesheet" href="css/menu.css">
+		<script src="js/menu.js"></script>
+		
+		<!-- CSS -->
+		<link href="css/style.css" rel="stylesheet">
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+		<script type='text/javascript' src="js/html5.js"></script>
+		<script type='text/javascript' src="js/respond.js"></script>
+		<![endif]-->
+
+		<!-- make use of the latest IE version-->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	</head>
+	<body>
+		<div class="menuFill">
+			<ul id="menu" class="dropdown">
+				<li class="active">
+					<a href="#" class="">Boards</a>
+					<ul id="boards" class="drop">
+					</ul>
+				</li>
+				<li>
+					<a href="#" class="">States</a>
+					<ul id="state" class="drop"></ul>
+				</li>
+				<li class="loggedin" class="">
+					<a id="disconnect" href="#">Logged in to as <span id="fullName"></span> </a>
+				</li>
+				<li class="loggedout" class="">
+					<a id="connectLink" href="#">Log in</a>
+				</li>
+			</ul>
+		</div>	
+		<div id="content">
+		</div>
+	</body>
+	<footer class="footer">
+		<p class="text-muted text-center">Made by Isaac Ouellet Therrien</p>
+	</footer>
+</html>

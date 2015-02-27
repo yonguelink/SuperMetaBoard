@@ -1,0 +1,50 @@
+body{
+	height:105%;
+}
+
+.loggedin{
+	/*visibility:hidden;*/
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 20px;
+  background-color: #f5f5f5;
+}
+
+.title{
+	font-weight:bold;
+	margin-bottom:0.5%;
+}
+
+.state{
+	font-weight:bold;
+	font-size:18px;
+}
+
+.card{
+	margin:1%;
+	background-color:grey;
+	width:85%;
+}
+
+.cardContent{
+	display:none;
+	color:white;
+}
+
+.stateTitle{
+	font-weight:bold;
+	font-size:18px;
+}
+
+.board, .list{
+	margin-bottom:1.5%;
+	margin-left:2.5%;
+	background-color:lightgrey;
+	float:left;
+	width:45%;
+}
