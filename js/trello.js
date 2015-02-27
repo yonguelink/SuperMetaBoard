@@ -39,6 +39,8 @@ var onAuthorize = function() {
 							//Trow away the lists that are in "Done" state
 							if(list.name.indexOf("Done")== -1){
 								var $dictCard = {};
+								var $dictDesc = {};
+								var $dictUser = {};
 								$dictName = {};
 								$dictStates[list.name] = list.name;
 								
@@ -49,16 +51,18 @@ var onAuthorize = function() {
 									$.each(list.cards, function(iy, card){
 										for(pos in card.idMembers){
 											Trello.members.get(card.idMembers[pos], {fields:"all"}, function(member){
+												
 												if(member.avatarHash == ""){
-													//Prepare the member full name
-													console.log(member.fullName);
+													//Prepare the member full name + initials
+													$dictUser[member.fullName] = member.initials;
 												}else{
 													//Prepare the member full name + image
-													console.log(member.fullName + " " + member.avatarHash);
+													$dictUser[member.fullName] = member.avatarHash
 												}
 											});
 										}
-										$dictCard[card.name] = card.desc;
+										$dictDesc[card.desc] = $dictUser;
+										$dictCard[card.name] = $dictDesc;
 									});
 								});
 								//Then we change the dictionary, and make sure we added the state in the state dictionary
@@ -144,9 +148,16 @@ function loadBoard(id){
 			
 			$title = $("<div>").attr({id:card+"Title", class:"title", onclick:"show('"+card.replace(/ /g,'')+"')"}).text(card).appendTo($card);
 			//If the card has a content
+			//NEED TO UPDATE THIS PART TO SUPPORT THE USER
 			if($dictTotal[id][list][card] != ""){
-				var $test = $("<span>").attr({id:card.replace(/ /g,'')+"plus"}).text(" +").appendTo($title);
+				
+				for(desc in $dictTotal[id][list][card]){
+					console.log(desc);
+				}
+				
+				var $plus = $("<span>").attr({id:card.replace(/ /g,'')+"plus"}).text(" +").appendTo($title);
 				$content = $("<div>").attr({id:card.replace(/ /g,'')+"Content", class:"cardContent"}).text($dictTotal[id][list][card]).appendTo($card);
+				//END OF UPDATE
 			}
 		}
 	}
@@ -171,10 +182,12 @@ function loadState(id){
 					
 					$title = $("<div>").attr({id:card+"Title", class:"title", onclick:"show('"+card.replace(/ /g,'')+"')"}).text(card).appendTo($card);
 					//If the card has a content
+					//UPDATE START
 					if($dictTotal[board][list][card] != ""){
-						var $test = $("<span>").attr({id:card.replace(/ /g,'')+"plus"}).text(" +").appendTo($title);
+						var $plus = $("<span>").attr({id:card.replace(/ /g,'')+"plus"}).text(" +").appendTo($title);
 						$content = $("<div>").attr({id:card.replace(/ /g,'')+"Content", class:"cardContent"}).text($dictTotal[board][list][card]).appendTo($card);
 					}
+					//UPDATE END
 				}
 			}
 		}
