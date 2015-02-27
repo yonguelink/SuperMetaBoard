@@ -3,7 +3,7 @@ body{
 }
 
 .loggedin{
-	/*visibility:hidden;*/
+	display:none;
 }
 
 .footer {
@@ -17,7 +17,7 @@ body{
 
 .title{
 	font-weight:bold;
-	
+	margin:1%;
 }
 
 .state{

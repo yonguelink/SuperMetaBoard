@@ -62,7 +62,7 @@ var onAuthorize = function() {
 											});
 										}
 										$dictDesc[card.desc] = $dictUser;
-										$dictCard[card.name] = $dictDesc;
+										$dictCard[card.name] = card.desc;
 									});
 								});
 								//Then we change the dictionary, and make sure we added the state in the state dictionary
