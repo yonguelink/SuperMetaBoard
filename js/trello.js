@@ -123,7 +123,7 @@ Trello.authorize({
 $("#connectLink").click(function(){
     Trello.authorize({
         type: "popup",
-		name: "Trello Metaboard",
+		name: "SuperMetaBoard",
         success: onAuthorize
     })
 });
