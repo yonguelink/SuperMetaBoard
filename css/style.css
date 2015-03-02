@@ -2,10 +2,6 @@ body{
 	height:105%;
 }
 
-.loggedin{
-	display:none;
-}
-
 .footer {
   position: fixed;
   bottom: 0;
@@ -32,6 +28,7 @@ body{
 	margin:2%;
 	background-color:grey;
 	width:85%;
+	border-radius: 3px;
 }
 
 .cardContent{
@@ -53,6 +50,7 @@ body{
 	background-color:lightgrey;
 	float:left;
 	width:45%;
+	border-radius: 3px;
 }
 
 .members{
@@ -83,7 +81,12 @@ body{
 }
 
 .trelloLogo{
+	margin-top:2px;
 	width:25px;
 	height:25px;
 	margin-left:5px;
+}
+
+.loggedin{
+	display:none;
 }

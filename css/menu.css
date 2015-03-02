@@ -9,7 +9,7 @@ ul#menu > li
 {
     list-style:none;
     /*change according to number of menu*/
-    width:350px;
+    min-width:275px;
     float:left;
     margin:0;
     padding:0;

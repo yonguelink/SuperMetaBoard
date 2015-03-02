@@ -2,15 +2,21 @@
 *	This document contains the calls to the Trello API
 *	Created by : 	Isaac Ouellet Therrien
 *	Created on : 	24/02/2015
-*	Modified by :	*Append your name here*
-*	Last modified: 	24/02/2015
+*	Contributors :	Benoit St-André
+*	Last modified: 	02/03/2015
 */
-var $dictTotal = {};
 var $dictStates = {};
 var $dictBoards = {};
-var $dictCards = {};
-var $counter = true;
+var isWritten = false;
 $(document).ready(function(){
+	
+	$.getScript("config/config.js").fail(function(){
+		if(confirm("You do not have a config file, do you want to create one now?")){
+			//The user wants to create his config file
+			window.location.href = "config/";
+		};
+	});
+	
 	
 updateLoggedIn;
 
@@ -45,6 +51,7 @@ var onAuthorize = function() {
 				}
 			});
 		}));
+	
 };
 
 function write(){
@@ -70,9 +77,8 @@ function write(){
         .text(state)
 		.appendTo(document.getElementById(state));
 	}
-	
+	loadDefault();
 }
-
 var updateLoggedIn = function() {
     var isLoggedIn = Trello.authorized();
     $(".loggedout").toggle(!isLoggedIn);
@@ -101,6 +107,16 @@ $("#disconnect").click(logout);
 
 });
 
+function loadDefault(){
+	if(!isWritten){
+		if(defaultLoad[0]=="state"){
+			loadState(defaultLoad[1]);
+		}else{
+			loadBoard(defaultLoad[1]);
+		}
+		isWritten = true;
+	}
+}
 function loadBoard(id){
 	$("#content").empty();
 	//Show the title of which board we load
