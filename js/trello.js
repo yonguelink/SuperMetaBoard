@@ -105,37 +105,45 @@ function loadBoard(id){
 	$("#content").empty();
 	//Show the title of which board we load
 	$board = $("<div>").attr({class:"boardTitle"}).text(id).appendTo("#content");
+	
 	//Get the current board Id
 	boardId = $dictBoards[id];
 	//Get all the list of lists the board currently has
 	Trello.boards.get(boardId, {lists:"open"}, function(states){
+		$link = $("<a>").attr({href:states.url, target:"_blank"}).appendTo($board);
+		$trelloLogo = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View "+board.name+" board in Trello", class:"trelloLogo"}).appendTo($link);
 		$.each(states.lists, function(ic, list){
 			//Throw away the lists that are in "Done" state
 			if(list.name.indexOf("Done")== -1){
 				$list = $("<div>").attr({id:list.id, class:"list"}).appendTo("#content");
 				$state = $("<div>").attr({id:list+"State", class:"state"}).text(list.name).appendTo($list);
+				
 				//Get the list of the current cards in the list
 				Trello.lists.get(list.id, {cards:"open"},function (list){
 					//Add all the cards in a dictionary
 					$.each(list.cards, function(iy, card){
 						$card = $("<div>").attr({id:card.id, class:"card"}).appendTo(document.getElementById(list.id));
 						$title = $("<div>").attr({id:card.id+"Title", class:"title", onclick:"show('"+card.id+"')"}).text(card.name).appendTo($card);
+						
 						if(card.desc != ""){
 							$plus = $("<span>").attr({id:card.id+"plus"}).text(" +").appendTo($title);
 							$content = $("<div>").attr({id:card.id+"Content", class:"cardContent"}).text(card.desc).appendTo($card);
 						}
+						$linkCard = $("<a>").attr({href:card.url, target:"_blank"}).appendTo($title);
+						$trelloLogoCard = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View this card in Trello", class:"trelloLogo"}).appendTo($linkCard);
 						if(card.idMembers != ""){
 							//Get the list of all members of the current card
 							$members = $("<div>").attr({id:card.id+"Members",class:"members"}).appendTo(document.getElementById(card.id));
 							for(pos in card.idMembers){
 								Trello.members.get(card.idMembers[pos], function(member){
 									$member = $("<div>").attr({id:member.id, class:"member"}).text(member.fullName).appendTo(document.getElementById(card.id+"Members"));
+									$linkMember = $("<a>").attr({href:member.url, target:"_blank", class:"linkMember"}).appendTo($member);
 									if(member.avatarHash == "" || member.avatarHash == null){
 										//Member doesn't have an avatar, we add his initials
-										$avatar = $("<div>").attr({id:member.id+"Avatar", class:"initials"}).text(member.initials).appendTo($member);
+										$avatar = $("<div>").attr({id:member.id+"Avatar", class:"initials"}).text(member.initials).appendTo($linkMember);
 									}else{
 										//Member have an avatar, we show it
-										$avatar = $("<img>").attr({id:member.id+"Avatar", class:"avatar", alt:member.username,src:"https://trello-avatars.s3.amazonaws.com/"+member.avatarHash+"/30.png"}).appendTo($member);
+										$avatar = $("<img>").attr({id:member.id+"Avatar", class:"avatar", title:member.username,src:"https://trello-avatars.s3.amazonaws.com/"+member.avatarHash+"/30.png"}).appendTo($linkMember);
 									}
 								});
 							}
@@ -160,6 +168,8 @@ function loadState(id){
 					if(board.lists[temp].name == listName){
 						$board = $("<div>").attr({id:board.id, class:"board"}).appendTo("#content");
 						$boardName = $("<div>").attr({id:board.id+"Board", class:"state"}).text(board.name).appendTo($board);
+						$link = $("<a>").attr({href:board.url, target:"_blank"}).appendTo($boardName);
+						$trelloLogo = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View "+board.name+" board in Trello", class:"trelloLogo"}).appendTo($link);
 					}
 				}
 				$.each(board.lists, function(ic, list){
@@ -171,22 +181,26 @@ function loadState(id){
 							$.each(list.cards, function(iy, card){
 								$card = $("<div>").attr({id:card.id, class:"card"}).appendTo(document.getElementById(board.id));
 								$title = $("<div>").attr({id:card.id+"Title", class:"title", onclick:"show('"+card.id+"')"}).text(card.name).appendTo($card);
+								
 								if(card.desc != ""){
 									$plus = $("<span>").attr({id:card.id+"plus"}).text(" +").appendTo($title);
 									$content = $("<div>").attr({id:card.id+"Content", class:"cardContent"}).text(card.desc).appendTo($card);
 								}
+								$linkCard = $("<a>").attr({href:card.url, target:"_blank"}).appendTo($title);
+								$trelloLogoCard = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View this card in Trello", class:"trelloLogo"}).appendTo($linkCard);
 								if(card.idMembers != ""){
 									//Get the list of all members of the current card
 									$members = $("<div>").attr({id:card.id+"Members",class:"members"}).appendTo(document.getElementById(card.id));
 									for(pos in card.idMembers){
 										Trello.members.get(card.idMembers[pos], function(member){
 											$member = $("<div>").attr({id:member.id, class:"member"}).text(member.fullName).appendTo(document.getElementById(card.id+"Members"));
+											$linkMember = $("<a>").attr({href:member.url, target:"_blank", class:"linkMember"}).appendTo($member);
 											if(member.avatarHash == "" || member.avatarHash == null){
 												//Member doesn't have an avatar, we add his initials
-												$avatar = $("<div>").attr({id:member.id+"Avatar", class:"initials"}).text(member.initials).appendTo($member);
+												$avatar = $("<div>").attr({id:member.id+"Avatar", class:"initials"}).text(member.initials).appendTo($linkMember);
 											}else{
 												//Member have an avatar, we show it
-												$avatar = $("<img>").attr({id:member.id+"Avatar", class:"avatar", alt:member.username,src:"https://trello-avatars.s3.amazonaws.com/"+member.avatarHash+"/30.png"}).appendTo($member);
+												$avatar = $("<img>").attr({id:member.id+"Avatar", class:"avatar", title:member.username,src:"https://trello-avatars.s3.amazonaws.com/"+member.avatarHash+"/30.png"}).appendTo($linkMember);
 											}
 										});
 									}
