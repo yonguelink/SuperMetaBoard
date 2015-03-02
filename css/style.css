@@ -27,6 +27,7 @@ body{
 }
 
 .card{
+	min-height:30px;
 	margin:2%;
 	background-color:grey;
 	width:85%;
@@ -51,4 +52,39 @@ body{
 	background-color:lightgrey;
 	float:left;
 	width:45%;
+}
+
+.members{
+	min-height:30px;
+	padding-bottom:35px;
+}
+
+.member{
+	float:right;
+	line-height: 30px;
+	margin: 0 4px 4px 0;
+}
+
+.initials, .avatar{
+	float:right;
+	/*CSS Taken from Trello*/
+	font-weight: 700;
+	height: 30px;
+	width:30px;
+	text-align:center;
+	overflow: hidden;
+	margin-left:4px;
+	background-color: #d6dadc;
+	border-radius: 3px;
+	color: #4d4d4d;
+	height: 30px;
+	
+	overflow: hidden;
+	position: relative;
+	text-decoration: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	z-index: 0;
 }

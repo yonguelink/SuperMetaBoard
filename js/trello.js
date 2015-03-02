@@ -126,9 +126,10 @@ function loadBoard(id){
 						}
 						if(card.idMembers != ""){
 							//Get the list of all members of the current card
+							$members = $("<div>").attr({id:card.id+"Members",class:"members"}).appendTo(document.getElementById(card.id));
 							for(pos in card.idMembers){
 								Trello.members.get(card.idMembers[pos], function(member){
-									$member = $("<div>").attr({id:member.id, class:"member"}).text(member.fullName).appendTo(document.getElementById(card.id));
+									$member = $("<div>").attr({id:member.id, class:"member"}).text(member.fullName).appendTo(document.getElementById(card.id+"Members"));
 									if(member.avatarHash == "" || member.avatarHash == null){
 										//Member doesn't have an avatar, we add his initials
 										$avatar = $("<div>").attr({id:member.id+"Avatar", class:"initials"}).text(member.initials).appendTo($member);
@@ -176,9 +177,10 @@ function loadState(id){
 								}
 								if(card.idMembers != ""){
 									//Get the list of all members of the current card
+									$members = $("<div>").attr({id:card.id+"Members",class:"members"}).appendTo(document.getElementById(card.id));
 									for(pos in card.idMembers){
 										Trello.members.get(card.idMembers[pos], function(member){
-											$member = $("<div>").attr({id:member.id, class:"member"}).text(member.fullName).appendTo(document.getElementById(card.id));
+											$member = $("<div>").attr({id:member.id, class:"member"}).text(member.fullName).appendTo(document.getElementById(card.id+"Members"));
 											if(member.avatarHash == "" || member.avatarHash == null){
 												//Member doesn't have an avatar, we add his initials
 												$avatar = $("<div>").attr({id:member.id+"Avatar", class:"initials"}).text(member.initials).appendTo($member);
@@ -196,29 +198,6 @@ function loadState(id){
 			}); 
 		}
 	});
-	/*//Get all the boards in the dictionary
-	for(board in $dictTotal){
-		//Get all the list in the current board
-		//Write a board
-		
-		for(list in $dictTotal[board]){
-			//If the list is the one we are looking for we do something, else we do nothing
-			if(list == id){
-				for(card in $dictTotal[board][list]){
-					//Writes a card
-					$card = $("<div>").attr({id:card, class:"card"}).appendTo($board);
-					$title = $("<div>").attr({id:card+"Title", class:"title", onclick:"show('"+card.replace(/ /g,'')+"')"}).text(card).appendTo($card);
-					//If the card has a content
-					//UPDATE START
-					if($dictTotal[board][list][card] != ""){
-						var $plus = $("<span>").attr({id:card.replace(/ /g,'')+"plus"}).text(" +").appendTo($title);
-						$content = $("<div>").attr({id:card.replace(/ /g,'')+"Content", class:"cardContent"}).text($dictTotal[board][list][card]).appendTo($card);
-					}
-					//UPDATE END
-				}
-			}
-		}
-	}*/
 }
 
 function show(id){
@@ -232,33 +211,3 @@ function show(id){
 		plus.innerHTML = " +"
 	}
 }
-
-/*
-								//Get all the cards in the current list
-								Trello.lists.get(list.id, {cards:"open"},function (list){
-									//Add all the cards in a dictionary
-									$counter = 0;
-									$.each(list.cards, function(iy, card){
-										for(pos in card.idMembers){
-											//Get all the member in the current card
-											Trello.members.get(card.idMembers[pos], {fields:"all"}, function(member){
-												
-												if(member.avatarHash == ""){
-													//Prepare the member full name + initials
-													$dictUser[member.fullName] = member.initials;
-												}else{
-													//Prepare the member full name + image
-													$dictUser[member.fullName] = member.avatarHash
-												}
-											});
-										}
-										$dictDesc[card.desc] = $dictUser;
-										$dictCard[card.name] = card.desc;
-									});
-								});
-								//Then we change the dictionary, and make sure we added the state in the state dictionary
-								$dictName[list.name] = list.name;
-								$dict[list.name] = $dictCard;
-
-
-*/
