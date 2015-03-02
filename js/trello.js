@@ -30,47 +30,16 @@ var onAuthorize = function() {
 		$.when(Trello.get("members/me/boards", function(boards) {
 			$.each(boards, function(ix, board) {
 				if(board.name != "Welcome Board"){
-					$dictTotal[board.name] = {};
 					$dictBoards[board.name] = board.name;
 					//Get all the lists the user has access to
 					Trello.boards.get(board.id, {lists:"open"}, function(states){
 						$dict = {}
 						$.each(states.lists, function(ic, list){
-							//Trow away the lists that are in "Done" state
+							//Throw away the lists that are in "Done" state
 							if(list.name.indexOf("Done")== -1){
-								var $dictCard = {};
-								var $dictDesc = {};
-								var $dictUser = {};
-								$dictName = {};
 								$dictStates[list.name] = list.name;
-								
-								//Get all the cards in the current list
-								Trello.lists.get(list.id, {cards:"open"},function (list){
-									//Add all the cards in a dictionary
-									$counter = 0;
-									$.each(list.cards, function(iy, card){
-										for(pos in card.idMembers){
-											Trello.members.get(card.idMembers[pos], {fields:"all"}, function(member){
-												
-												if(member.avatarHash == ""){
-													//Prepare the member full name + initials
-													$dictUser[member.fullName] = member.initials;
-												}else{
-													//Prepare the member full name + image
-													$dictUser[member.fullName] = member.avatarHash
-												}
-											});
-										}
-										$dictDesc[card.desc] = $dictUser;
-										$dictCard[card.name] = card.desc;
-									});
-								});
-								//Then we change the dictionary, and make sure we added the state in the state dictionary
-								$dictName[list.name] = list.name;
-								$dict[list.name] = $dictCard;
 							}
 						});
-						$dictTotal[board.name] = $dict;
 						write();
 					}); 
 				}
