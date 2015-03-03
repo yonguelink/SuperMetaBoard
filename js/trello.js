@@ -9,12 +9,9 @@ var $dictStates = {};
 var $dictBoards = {};
 var isWritten = false;
 $(document).ready(function(){
-	
+	//The configuration is, for now, manual.
 	$.getScript("config/config.js").fail(function(){
-		if(confirm("You do not have a config file, do you want to create one now?")){
-			//The user wants to create his config file
-			window.location.href = "config/";
-		};
+		alert("You do not have a configuration file. You can create one with the following information:\nvar defaultLoad = ['type','name'];\nReplace type with board or state\nreplace name with the name of what you want to load.");
 	});
 	
 	

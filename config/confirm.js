@@ -9,7 +9,7 @@ function checkIfEmpty(){
 	}else{
 		var type = "state";
 	}
-	$("<input>").attr({name:"list", value:type, type:"textbox"}).text(type).appendTo("#form");
+	$("<input>").attr({name:"list", value:type, type:"textbox", style:"display:none;"}).text(type).appendTo("#form");
 	if(name.selectedIndex == 0){
 		return confirm('Are you sure you want to write the first name? We will save this: Type = '+ type +' and Name = '+ name.value);
 	}else{
