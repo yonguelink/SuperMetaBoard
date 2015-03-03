@@ -179,7 +179,7 @@ function loadState(id){
 			Trello.boards.get(me.idBoards[posBoard], {lists:"open"}, function(board){
 				for(temp in board.lists){
 					if(board.lists[temp].name == listName){
-						$board = $("<div>").attr({id:board.id, class:"board"}).appendTo("#content");
+						$board = $("<div>").attr({id:board.id, class:"board", style:"display:none;"}).appendTo("#content");
 						$boardName = $("<div>").attr({id:board.id+"Board", class:"state"}).text(board.name).appendTo($board);
 						$link = $("<a>").attr({href:board.url, target:"_blank"}).appendTo($boardName);
 						$trelloLogo = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View "+board.name+" board in Trello", class:"trelloLogo"}).appendTo($link);
@@ -192,6 +192,7 @@ function loadState(id){
 						Trello.lists.get(list.id, {cards:"open"},function (list){
 							//Add all the cards in a dictionary
 							$.each(list.cards, function(iy, card){
+								document.getElementById(board.id).style.display = "block";
 								$card = $("<div>").attr({id:card.id, class:"card"}).appendTo(document.getElementById(board.id));
 								$title = $("<div>").attr({id:card.id+"Title", class:"title", onclick:"show('"+card.id+"')"}).text(card.name).appendTo($card);
 								
