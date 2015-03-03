@@ -1,1 +1,0 @@
-var defaultLoad = ['board','5346027cc168b82d575079ab'];

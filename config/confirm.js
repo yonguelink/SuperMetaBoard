@@ -32,7 +32,7 @@ var onAuthorize = function() {
 	$.when(Trello.get("members/me/boards", function(boards) {
 		$.each(boards, function(ix, board) {
 			if(board.name != "Welcome Board"){
-				$board = $("<option>").attr({value:board.id}).text(board.name + " - Board").appendTo("#toBeFilled");
+				$board = $("<option>").attr({value:board.name}).text(board.name + " - Board").appendTo("#toBeFilled");
 				//Get all the lists the user has access to
 				Trello.boards.get(board.id, {lists:"open"}, function(states){
 					$dict = {}
