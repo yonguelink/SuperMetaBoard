@@ -90,3 +90,18 @@ body{
 .loggedin{
 	display:none;
 }
+
+#filter #uparams{
+	/*display:none;*/
+}
+
+#filter #user, #filter #type{
+	display:none;
+	width:100%;
+	cursor:pointer;
+}
+
+.check{
+	margin-left:1%;
+	float:left;
+}
