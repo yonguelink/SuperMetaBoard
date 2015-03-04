@@ -3,12 +3,13 @@
 *	Created by : 	Isaac Ouellet Therrien
 *	Created on : 	24/02/2015
 *	Contributors :	Benoit St-André
-*	Last modified: 	02/03/2015
+*	Last modified: 	04/03/2015
 */
 var $dictStates = {};
 var $dictBoards = {};
 var $dictMembers = {};
 var $removedMembers = {};
+var $removedType = {};
 var isWritten = false;
 /*Once the page is ready to execute something*/
 $(document).ready(function(){
@@ -107,8 +108,9 @@ $(document).ready(function(){
 
 /*Loads the thing we want to see first from config.js*/
 function loadDefault(){
-	//Make sure the removedMembers list is empty
+	//Make sure the removed list are empty
 	deleteRemovedMembers();
+	deleteRemovedType();
 	//Make sure we haven't done that already
 	if(!isWritten){
 		//If we want a state, we loadState with its name
@@ -128,6 +130,8 @@ function loadBoard(id){
 	cleanContent(id);
 	//Adds a button so we can reload without clearing the config
 	$button = $("<button>").attr({type:"button", id:"reloadButton", onclick:"loadBoard('"+id+"')"}).text("Reload this board").appendTo("#filter");
+	//Adds the configuration of the board that have the current list name
+	$("#typeShowText").text("Show the lists that are present");
 	//Show the title of which board we load
 	$board = $("<div>").attr({id:id+"boardTitleId",class:"boardTitle"}).text(id).appendTo("#content");
 	//Get the current board Id
@@ -142,12 +146,23 @@ function loadBoard(id){
 		$.each(states.lists, function(ic, list){
 			//Throw away the list that we cannot show
 			if(canShowListName(list.name)){
-				//Add a list to the content
-				$list = $("<div>").attr({id:list.id, class:"list", style:"display:none;"}).appendTo("#content");
-				//Add the name of the said list to content
-				$state = $("<div>").attr({id:list+"State", class:"state"}).text(list.name).appendTo($list);
-				//Add the cards to the list
-				getCards(list,list);
+				//Make sure it's not a list that has been removed
+				if(!(list.id in $removedType)){
+					//Add a list to the content
+					$list = $("<div>").attr({id:list.id, class:"list", style:"display:none;"}).appendTo("#content");
+					//Add the name of the said list to content
+					$state = $("<div>").attr({id:list+"State", class:"state"}).text(list.name).appendTo($list);
+					//Add the cards to the list
+					getCards(list,list);
+				}
+				//And what about updating the filter too?
+				//If the list hasn't already been added we add it
+				if(document.getElementById(list.id+"Select") == null){
+					//Add a name in the filter
+					$menuListName = $("<div>").attr({id:list.id+"Filter", style:"display:none;", class:"check"}).text(list.name + " ").appendTo("#type");
+					//Add a checkbox, so we can exclude or include the list
+					$menuList = $("<input>").attr({id:list.id+"Select", type:"checkbox", value:list.id, checked:true, onclick:"changeType('"+list.id+"')"}).text(list.name).appendTo($menuListName);
+				}
 			}
 		});
 	}); 
@@ -159,6 +174,8 @@ function loadState(id){
 	cleanContent(id);
 	//Adds a button so we can reload without clearing the config
 	$button = $("<button>").attr({type:"button", id:"reloadButton", onclick:"loadState('"+id+"')"}).text("Reload this board").appendTo("#filter");
+	//Adds the configuration of the board that have the current list name
+	$("#typeShowText").text("Show the boards that are present");
 	//Show the title of which list we load
 	$state = $("<div>").attr({class:"stateTitle"}).text(id).appendTo("#content");
 	//Get the name of the list we want to show
@@ -170,29 +187,43 @@ function loadState(id){
 		for(posBoard in me.idBoards){
 			//Get all the list of lists the board currently has
 			Trello.boards.get(me.idBoards[posBoard], {lists:"open"}, function(board){
-				//On all the lists in the current board
-				for(temp in board.lists){
-					//Check if the list we have right now has the same name as the one we're asking for
-					if(board.lists[temp].name == listName){
-						//We might be able to show the current board
-						//We add its HTML, but hide it
-						$board = $("<div>").attr({id:board.id, class:"board", style:"display:none;"}).appendTo("#content");
-						//Add its name
-						$boardName = $("<div>").attr({id:board.id+"Board", class:"state"}).text(board.name).appendTo($board);
-						//Add its link to Trello
-						$link = $("<a>").attr({href:board.url, target:"_blank"}).appendTo($boardName);
-						//Trello logo as clickable link
-						$trelloLogo = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View "+board.name+" board in Trello", class:"trelloLogo"}).appendTo($link);
+				if(!(board.id in $removedType)){
+					//On all the lists in the current board
+					for(temp in board.lists){
+						//Check if the list we have right now has the same name as the one we're asking for
+						if(board.lists[temp].name == listName){
+							//We might be able to show the current board
+							//We add its HTML, but hide it
+							$board = $("<div>").attr({id:board.id, class:"board", style:"display:none;"}).appendTo("#content");
+							//Add its name
+							$boardName = $("<div>").attr({id:board.id+"Board", class:"state"}).text(board.name).appendTo($board);
+							//Add its link to Trello
+							$link = $("<a>").attr({href:board.url, target:"_blank"}).appendTo($boardName);
+							//Trello logo as clickable link
+							$trelloLogo = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View "+board.name+" board in Trello", class:"trelloLogo"}).appendTo($link);
+							//And what about updating the filter too?
+							//If the board hasn't already been added we add it
+							if(document.getElementById(board.id+"Select") == null){
+								//Add a name in the filter
+								if($.isEmptyObject($removedType)){
+									$menuBoardName = $("<div>").attr({id:board.id+"Filter", class:"check"}).text(board.name + " ").appendTo("#type");
+								}else{
+									$menuBoardName = $("<div>").attr({id:board.id+"Filter", style:"display:none;", class:"check"}).text(board.name + " ").appendTo("#type");
+								}
+								//Add a checkbox, so we can exclude or include the board
+								$menuBoard = $("<input>").attr({id:board.id+"Select", type:"checkbox", value:board.id, checked:true, onclick:"changeType('"+board.id+"')"}).text(board.name).appendTo($menuBoardName);
+							}
+						}
 					}
+					//Once everything's set we loop again on all the lists to show'em
+					$.each(board.lists, function(ic, list){
+						//Throw away the lists that we cannot show, also we make sure that it's actually the list we want!
+						if(canShowListName(list.name) && list.name == listName){
+							//Get the list of the current cards in the list
+							getCards(list,board);
+						}
+					});
 				}
-				//Once everything's set we loop again on all the lists to show'em
-				$.each(board.lists, function(ic, list){
-					//Throw away the lists that we cannot show, also we make sure that it's actually the list we want!
-					if(canShowListName(list.name) && list.name == listName){
-						//Get the list of the current cards in the list
-						getCards(list,board);
-					}
-				});
 			}); 
 		}
 	});
@@ -209,6 +240,8 @@ function cleanContent(id){
 	//Makes sure we can update the config div, and does it
 	if($.isEmptyObject($removedMembers)){
 		$("#user").empty();
+	}
+	if($.isEmptyObject($removedType)){
 		$("#type").empty();
 	}
 	//Make sure we do not already have a reload button
@@ -279,6 +312,8 @@ function addCards(card, type){
 				$card.attr({style:"display:block"});
 				//We also make sure the board or list is shown
 				document.getElementById(type.id).style.display = "block";
+				//Shown also in the config
+				document.getElementById(type.id+"Filter").style.display = "block";
 				//We get all the information of the current member
 				Trello.members.get(card.idMembers[pos], function(member){
 					//We add a place for this member
@@ -312,10 +347,19 @@ function addCards(card, type){
 
 //Load from the boards' main menu
 function loadBoardRemove(id){
-	//Delete every single item from the removedMember list
+	//Delete every single item from the removed lists
 	deleteRemovedMembers();
+	deleteRemovedType();
 	//Load the board as new
 	loadBoard(id);
+}
+
+//We MUST make sure that the removedType list is totaly EMPTY
+function deleteRemovedType(){
+	//Delete every single item from the removedMember list
+	for(i in $removedType){
+		delete $removedType[i];
+	}
 }
 
 //We MUST make sure that the removedMember list is totaly EMPTY
@@ -328,8 +372,9 @@ function deleteRemovedMembers(){
 
 //Load from the lists' main menu
 function loadStateRemove(id){
-	//Delete every single item from the removedMember list
+	//Delete every single item from the removed lists
 	deleteRemovedMembers();
+	deleteRemovedType();
 	//Load the state as new
 	loadState(id);
 }
@@ -342,6 +387,17 @@ function changeMember(id){
 	}else{
 		//If the member doesn't exist, then it has been checked out, so we want to add it to the RemovedList
 		$removedMembers[id] = id;
+	}
+}
+
+//Update the status of the type
+function changeType(id){
+	//If the type already exist, then it has been checked back, so we need to remove it
+	if($removedType[id]){
+		delete $removedType[id];
+	}else{
+		//If the type doesn't exist, then it has been checked out, so we want to add it to the RemovedList
+		$removedType[id] = id;
 	}
 }
 
