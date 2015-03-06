@@ -34,18 +34,20 @@ $(document).ready(function(){
 			//Get all the boards the current user has access to
 			$.when(Trello.get("members/me/boards", function(boards) {
 				$.each(boards, function(ix, board) {
-					if(board.name != "Welcome Board"){
-						$dictBoards[board.name] = board.id;
-						//Get all the lists the user has access to
-						Trello.boards.get(board.id, {lists:"open"}, function(states){
-							$.each(states.lists, function(ic, list){
-								//Throw away the lists that are in "Done" state
-								if(list.name.indexOf("Done")== -1){
-									$dictStates[list.name] = list.name;
-								}
-							});
-							write();
-						}); 
+					if(!board.closed){
+						if(board.name != "Welcome Board"){
+							$dictBoards[board.name] = board.id;
+							//Get all the lists the user has access to
+							Trello.boards.get(board.id, {lists:"open"}, function(states){
+								$.each(states.lists, function(ic, list){
+									//Throw away the lists that are in "Done" state
+									if(list.name.indexOf("Done")== -1){
+										$dictStates[list.name] = list.name;
+									}
+								});
+								write();
+							}); 
+						}
 					}
 				});
 			}));
@@ -187,42 +189,44 @@ function loadState(id){
 		for(posBoard in me.idBoards){
 			//Get all the list of lists the board currently has
 			Trello.boards.get(me.idBoards[posBoard], {lists:"open"}, function(board){
-				if(!(board.id in $removedType)){
-					//On all the lists in the current board
-					for(temp in board.lists){
-						//Check if the list we have right now has the same name as the one we're asking for
-						if(board.lists[temp].name == listName){
-							//We might be able to show the current board
-							//We add its HTML, but hide it
-							$board = $("<div>").attr({id:board.id, class:"board", style:"display:none;"}).appendTo("#content");
-							//Add its name
-							$boardName = $("<div>").attr({id:board.id+"Board", class:"state"}).text(board.name).appendTo($board);
-							//Add its link to Trello
-							$link = $("<a>").attr({href:board.url, target:"_blank"}).appendTo($boardName);
-							//Trello logo as clickable link
-							$trelloLogo = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View "+board.name+" board in Trello", class:"trelloLogo"}).appendTo($link);
-							//And what about updating the filter too?
-							//If the board hasn't already been added we add it
-							if(document.getElementById(board.id+"Select") == null){
-								//Add a name in the filter
-								if($.isEmptyObject($removedType)){
-									$menuBoardName = $("<div>").attr({id:board.id+"Filter", class:"check"}).text(board.name + " ").appendTo("#type");
-								}else{
-									$menuBoardName = $("<div>").attr({id:board.id+"Filter", style:"display:none;", class:"check"}).text(board.name + " ").appendTo("#type");
+				if(!board.closed){
+					if(!(board.id in $removedType)){
+						//On all the lists in the current board
+						for(temp in board.lists){
+							//Check if the list we have right now has the same name as the one we're asking for
+							if(board.lists[temp].name == listName){
+								//We might be able to show the current board
+								//We add its HTML, but hide it
+								$board = $("<div>").attr({id:board.id, class:"board", style:"display:none;"}).appendTo("#content");
+								//Add its name
+								$boardName = $("<div>").attr({id:board.id+"Board", class:"state"}).text(board.name).appendTo($board);
+								//Add its link to Trello
+								$link = $("<a>").attr({href:board.url, target:"_blank"}).appendTo($boardName);
+								//Trello logo as clickable link
+								$trelloLogo = $("<img>").attr({src:"https://s3.amazonaws.com/trello/images/og/trello-icon.png", title:"View "+board.name+" board in Trello", class:"trelloLogo"}).appendTo($link);
+								//And what about updating the filter too?
+								//If the board hasn't already been added we add it
+								if(document.getElementById(board.id+"Select") == null){
+									//Add a name in the filter
+									if($.isEmptyObject($removedType)){
+										$menuBoardName = $("<div>").attr({id:board.id+"Filter", class:"check"}).text(board.name + " ").appendTo("#type");
+									}else{
+										$menuBoardName = $("<div>").attr({id:board.id+"Filter", style:"display:none;", class:"check"}).text(board.name + " ").appendTo("#type");
+									}
+									//Add a checkbox, so we can exclude or include the board
+									$menuBoard = $("<input>").attr({id:board.id+"Select", type:"checkbox", value:board.id, checked:true, onclick:"changeType('"+board.id+"')"}).text(board.name).appendTo($menuBoardName);
 								}
-								//Add a checkbox, so we can exclude or include the board
-								$menuBoard = $("<input>").attr({id:board.id+"Select", type:"checkbox", value:board.id, checked:true, onclick:"changeType('"+board.id+"')"}).text(board.name).appendTo($menuBoardName);
 							}
 						}
+						//Once everything's set we loop again on all the lists to show'em
+						$.each(board.lists, function(ic, list){
+							//Throw away the lists that we cannot show, also we make sure that it's actually the list we want!
+							if(canShowListName(list.name) && list.name == listName){
+								//Get the list of the current cards in the list
+								getCards(list,board);
+							}
+						});
 					}
-					//Once everything's set we loop again on all the lists to show'em
-					$.each(board.lists, function(ic, list){
-						//Throw away the lists that we cannot show, also we make sure that it's actually the list we want!
-						if(canShowListName(list.name) && list.name == listName){
-							//Get the list of the current cards in the list
-							getCards(list,board);
-						}
-					});
 				}
 			}); 
 		}
