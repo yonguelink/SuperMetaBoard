@@ -7,6 +7,7 @@
 */
 var $dictStates = {};
 var $dictBoards = {};
+var $favBoard = {};
 var $dictMembers = {};
 var $removedMembers = {};
 var $removedType = {};
@@ -32,9 +33,10 @@ $(document).ready(function(){
 			
 			//Fills up the dictStates and dictBoards
 			//Get all the boards the current user has access to
-			$.when(Trello.get("members/me/boards", function(boards) {
+			$.when(Trello.get("members/me/boards", {boardStars:"mine"}, function(boards) {
 				$.each(boards, function(ix, board) {
 					if(!board.closed){
+						if(board.starred){$favBoard[board.name]=board.id}
 						if(board.name != "Welcome Board"){
 							$dictBoards[board.name] = board.id;
 							//Get all the lists the user has access to
@@ -58,7 +60,7 @@ $(document).ready(function(){
 		$("#boards").empty();
 		$("#state").empty();
 		//Show the menu with the Board Name
-		for (board in $dictBoards){
+		for (board in $favBoard){
 			$board = $("<li>")
 			.attr({id:board, onclick:"loadBoardRemove('"+board+"')"})
 			.appendTo("#boards");
@@ -66,6 +68,18 @@ $(document).ready(function(){
 			.attr({href:"#"})
 			.text(board)
 			.appendTo(document.getElementById(board));
+			$star = $("<span>").attr({class:"star"}).text("*").appendTo($board);
+		}
+		for (board in $dictBoards){
+			if(!(board in $favBoard)){
+				$board = $("<li>")
+				.attr({id:board, onclick:"loadBoardRemove('"+board+"')"})
+				.appendTo("#boards");
+				$board = $("<a>")
+				.attr({href:"#"})
+				.text(board)
+				.appendTo(document.getElementById(board));
+			}
 		}
 		//Show the menu with the List Name aka State
 		for (state in $dictStates){
